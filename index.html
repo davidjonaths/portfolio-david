@@ -25,6 +25,8 @@
       --glow: rgba(92, 115, 232, .18);
       --page-glow: rgba(111, 95, 230, .16);
       --page-glow-secondary: rgba(74, 128, 198, .1);
+      --about-glow-blue: rgba(77, 130, 255, .2);
+      --about-glow-purple: rgba(174, 88, 246, .18);
       --button-gradient: linear-gradient(120deg, #c5ceff 0%, #b9c4ff 48%, #d9c5ff 100%);
       --button-shadow: rgba(154, 166, 255, .24);
       --shadow: 0 24px 70px rgba(0, 0, 0, .28);
@@ -105,11 +107,19 @@
       color: var(--text);
       cursor: pointer;
     }
+    .icon-button[aria-pressed="true"] { border-color: rgba(169,184,255,.5); color: var(--accent-strong); }
     .icon-button svg, .menu-button svg { width: 18px; height: 18px; }
     .menu-button { display: none; }
 
-    .hero { min-height: 690px; display: grid; align-items: center; padding: 72px 0 88px; }
-    .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 56px; }
+    .hero { position: relative; min-height: 690px; display: grid; align-items: center; overflow: hidden; isolation: isolate; padding: 72px 0 88px; }
+    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 56px; }
+    .hero-grid > div:first-child { animation: hero-enter .75s both; }
+    .hero h1 .name-line { display: inline-block; overflow: hidden; padding: 0 .08em .06em 0; margin-right: -.08em; }
+    .hero h1 .name-line span { display: inline-block; animation: name-rise .8s cubic-bezier(.2,.75,.25,1) both; }
+    .hero h1 .name-line:nth-child(2) span { animation-delay: .12s; }
+    .hero-role { animation: hero-enter .75s .18s both; }
+    .hero-copy { animation: hero-enter .75s .28s both; }
+    .hero .button-row { animation: hero-enter .75s .38s both; }
     .availability {
       display: inline-flex;
       align-items: center;
@@ -146,7 +156,6 @@
     .button.primary { border-color: transparent; background: var(--button-gradient); color: var(--accent-ink); box-shadow: 0 8px 24px var(--button-shadow); }
     .button.primary:hover { border-color: transparent; box-shadow: 0 12px 30px var(--button-shadow); }
     .button svg { width: 17px; height: 17px; }
-    .hero-grid > div:first-child { animation: hero-enter .75s both; }
     .portrait-wrap { position: relative; display: grid; min-height: 440px; place-items: center; animation: portrait-float 6s 1s ease-in-out infinite; }
     .portrait-orbit {
       position: absolute;
@@ -182,7 +191,7 @@
     .float-dot.two { bottom: 20%; left: 7%; width: 11px; height: 11px; opacity: .65; animation: dot-float 5s 1s ease-in-out infinite; }
     .float-dot.three { right: 17%; bottom: 5%; width: 28px; height: 28px; opacity: .18; animation: dot-float 6s .5s ease-in-out infinite; }
 
-    section { padding: 96px 0; }
+    section { padding: clamp(76px, 8vw, 112px) 0; }
     .section-heading { max-width: 680px; margin-bottom: 38px; }
     .section-heading h2 { margin: 13px 0 12px; font-size: clamp(1.9rem, 3.8vw, 2.7rem); font-weight: 600; line-height: 1.12; letter-spacing: -.045em; }
     .section-heading p { margin-bottom: 0; color: var(--muted); font-size: .94rem; line-height: 1.7; }
@@ -203,6 +212,38 @@
     .focus-card .mini-icon svg { width: 19px; height: 19px; }
     .focus-card h3 { margin-bottom: 7px; font-size: .96rem; font-weight: 600; }
     .focus-card p { margin-bottom: 0; color: var(--muted); font-size: .82rem; line-height: 1.65; }
+
+    main > section:not(.hero) { position: relative; overflow: clip; isolation: isolate; }
+    main > section:not(.hero)::before, main > section:not(.hero)::after {
+      position: absolute;
+      z-index: -1;
+      top: -12%;
+      width: clamp(340px, 50vw, 720px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      filter: blur(70px);
+      content: "";
+      pointer-events: none;
+    }
+    main > section:not(.hero)::before {
+      left: -22%;
+      background: radial-gradient(circle, var(--about-glow-blue) 0%, transparent 69%);
+    }
+    main > section:not(.hero)::after {
+      right: -22%;
+      background: radial-gradient(circle, var(--about-glow-purple) 0%, transparent 69%);
+    }
+    main > section:not(.hero):nth-of-type(odd)::before {
+      right: -22%;
+      left: auto;
+      background: radial-gradient(circle, var(--about-glow-purple) 0%, transparent 69%);
+    }
+    main > section:not(.hero):nth-of-type(odd)::after {
+      right: auto;
+      left: -22%;
+      background: radial-gradient(circle, var(--about-glow-blue) 0%, transparent 69%);
+    }
+    main > section:not(.hero) > .container { position: relative; z-index: 1; }
 
     .soft-section { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.012); }
     .timeline { display: grid; gap: 14px; }
@@ -281,10 +322,23 @@
     .footer-inner { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
     .social-links { display: flex; gap: 16px; }
     .social-links a:hover { color: var(--text); }
-    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal { opacity: 0; filter: blur(5px); transform: translateY(24px) scale(.99); transition: opacity .75s cubic-bezier(.2,.7,.25,1), filter .75s ease, transform .75s cubic-bezier(.2,.7,.25,1), border-color .25s ease, box-shadow .3s ease; transition-delay: var(--reveal-delay, 0ms); }
+    .reveal.visible { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+    .reveal-group > .reveal:hover { transform: translateY(-5px) scale(1); }
+    .project-card, .it-project-card, .focus-card { transition: transform .3s ease, border-color .25s ease, box-shadow .3s ease; }
+    .project-card:hover, .it-project-card:hover, .focus-card:hover { transform: translateY(-5px); }
+    .brand-mark { transition: transform .25s ease, background .25s ease; }
+    .brand:hover .brand-mark { transform: rotate(-6deg) scale(1.05); background: var(--glow); }
+    .nav-links a { position: relative; }
+    .nav-links a::after { position: absolute; right: 0; bottom: -5px; left: 0; height: 1px; transform: scaleX(0); transform-origin: left; background: var(--accent); content: ""; transition: transform .25s ease; }
+    .nav-links a:hover::after, .nav-links a:focus-visible::after { transform: scaleX(1); }
+    .experience-gallery a.reveal, .cert-gallery a.reveal, .project-media a.reveal { transition-duration: .65s; }
     @keyframes hero-enter {
       from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes name-rise {
+      from { opacity: 0; transform: translateY(105%); }
       to { opacity: 1; transform: translateY(0); }
     }
     @keyframes portrait-enter {
@@ -319,6 +373,8 @@
       --glow: rgba(78, 98, 199, .12);
       --page-glow: rgba(139, 125, 225, .12);
       --page-glow-secondary: rgba(94, 156, 201, .09);
+      --about-glow-blue: rgba(82, 150, 255, .28);
+      --about-glow-purple: rgba(176, 91, 247, .25);
       --button-gradient: linear-gradient(120deg, #343f85 0%, #4e62c7 52%, #7557ae 100%);
       --button-shadow: rgba(65, 81, 171, .22);
       --shadow: 0 24px 70px rgba(31, 42, 83, .12);
@@ -362,6 +418,11 @@
       .nav-links a { padding: 11px 4px; font-size: .93rem; }
       .hero { min-height: auto; padding: 65px 0 85px; }
       .hero-grid { grid-template-columns: 1fr; }
+      main > section:not(.hero)::before, main > section:not(.hero)::after { top: 0; width: min(95vw, 500px); filter: blur(45px); }
+      main > section:not(.hero)::before { left: -42%; }
+      main > section:not(.hero)::after { right: -42%; }
+      main > section:not(.hero):nth-of-type(odd)::before { right: -42%; left: auto; }
+      main > section:not(.hero):nth-of-type(odd)::after { right: auto; left: -42%; }
       .hero-copy { max-width: 540px; }
       .portrait-wrap { min-height: 340px; margin-top: 18px; }
       .portrait-orbit { width: 285px; }
@@ -391,7 +452,8 @@
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation: none !important; }
-      .reveal { opacity: 1; transform: none; }
+      .reveal { opacity: 1; filter: none; transform: none; }
+      .reveal { transition-delay: 0s !important; }
     }
   </style>
 </head>
@@ -413,6 +475,11 @@
         <a href="#contact">Contact</a>
       </div>
       <div class="nav-actions">
+        <button class="icon-button" id="music-toggle" type="button" aria-label="Play Digital Clouds by Alejandro Magaña (Mixkit)" aria-pressed="false" title="Play Digital Clouds by Alejandro Magaña (Mixkit)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 10v4h3l4 3V7l-4 3H4Z"></path><path d="M15 9.5a4 4 0 0 1 0 5M17.5 7a7.5 7.5 0 0 1 0 10"></path>
+          </svg>
+        </button>
         <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle theme">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>
@@ -426,12 +493,13 @@
       </div>
     </nav>
   </header>
+  <audio id="background-music" src="assets/music/digital-clouds.mp3" loop preload="none"></audio>
 
   <main>
     <section class="hero" id="home">
       <div class="hero-grid container">
         <div>
-          <h1>David<br>Jonathan</h1>
+          <h1><span class="name-line"><span>David</span></span><br><span class="name-line"><span>Jonathan</span></span></h1>
           <p class="hero-role">Computer Science Undergraduate <span aria-hidden="true">|</span> Student Ambassador <span aria-hidden="true">|</span> Community Leader</p>
           <p class="hero-copy">Undergraduate Computer Science student at Universitas Sumatera Utara, AIESEC member, and Ministry of Finance intern. I build experience across data, digital communication, student programs, and community initiatives.</p>
           <div class="button-row">
@@ -467,7 +535,7 @@
             <p>I have worked on internal data dashboards, student engagement, digital campaigns, event coordination, and youth mentorship. I enjoy combining analytical thinking, communication, and collaboration to support useful projects and stronger communities.</p>
           </div>
         </div>
-        <div class="focus-grid reveal">
+        <div class="focus-grid reveal reveal-group">
           <article class="focus-card">
             <span class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-12-2 16"></path></svg></span>
             <h3>Data & Digital</h3><p>Working with organizational data, internal dashboards, and digital communication.</p>
@@ -495,7 +563,7 @@
           <h2>Professional Experience</h2>
           <p>Selected professional, student leadership, and community roles from my experience.</p>
         </div>
-        <div class="timeline">
+        <div class="timeline reveal-group">
           <article class="surface-card timeline-card reveal">
             <div class="timeline-date">Oct 2026 - Present</div>
             <div>
@@ -626,7 +694,7 @@
           <h2>Certifications & Achievements</h2>
           <p>Professional certificates, training, and practical competencies.</p>
         </div>
-        <div class="cert-grid">
+        <div class="cert-grid reveal-group">
           <article class="surface-card cert-card reveal">
             <div class="cert-mark">01</div>
             <h3>English Certificate</h3>
@@ -685,7 +753,7 @@
           <h2>Skills & Expertise</h2>
           <p>Skills demonstrated across my studies, internship, student programs, and community work.</p>
         </div>
-        <div class="skill-groups">
+        <div class="skill-groups reveal-group">
           <article class="surface-card skill-group reveal"><h3>Data & Technology</h3><div class="chips"><span class="chip">Data Validation</span><span class="chip">Data Visualization</span><span class="chip">Dashboard Development</span><span class="chip">Internal Applications</span></div></article>
           <article class="surface-card skill-group reveal"><h3>Communication & Creative</h3><div class="chips"><span class="chip">English</span><span class="chip">Visual Communication</span><span class="chip">Content Creation</span><span class="chip">Digital Campaigns</span></div></article>
           <article class="surface-card skill-group reveal"><h3>Leadership & Community</h3><div class="chips"><span class="chip">Event Coordination</span><span class="chip">Participant Experience</span><span class="chip">Mentorship</span><span class="chip">Community Engagement</span></div></article>
@@ -700,7 +768,7 @@
           <h2>IT Projects</h2>
           <p>Applications and digital platforms built for student life, financial literacy, public service, and community impact.</p>
         </div>
-        <div class="it-project-grid">
+        <div class="it-project-grid reveal-group">
           <article class="surface-card it-project-card reveal">
             <div class="project-type">Mobile Application</div>
             <h3>Finding Kost</h3>
@@ -752,7 +820,7 @@
           <h2>Projects & Community Initiatives</h2>
           <p>Selected programs where I contributed through event strategy, mentorship, design, and coordination.</p>
         </div>
-        <div class="project-grid">
+        <div class="project-grid reveal-group">
           <article class="surface-card project-card reveal">
             <div class="project-media" aria-label="Global Village 4.0 photos">
               <a href="assets/projects/global-village-4/1.jpg" target="_blank" rel="noreferrer"><img src="assets/projects/global-village-4/1.jpg" alt="Global Village 4.0 event documentation 1" loading="lazy" decoding="async"></a>
@@ -809,13 +877,44 @@
   <footer>
     <div class="container footer-inner">
       <span>© <span id="year"></span> David Jonathan Simanjuntak. Made with care.</span>
-      <div class="social-links"><a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a><a href="https://www.linkedin.com/in/davidjonath" target="_blank" rel="noreferrer">LinkedIn</a></div>
+      <div class="social-links"><a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a><a href="https://www.linkedin.com/in/davidjonath" target="_blank" rel="noreferrer">LinkedIn</a><a href="https://mixkit.co/free-stock-music/chillout/" target="_blank" rel="noreferrer">Music: “Digital Clouds” by Alejandro Magaña · Mixkit</a></div>
     </div>
   </footer>
   <script>
     const themeToggle = document.querySelector("#theme-toggle");
+    const musicToggle = document.querySelector("#music-toggle");
+    const backgroundMusic = document.querySelector("#background-music");
     const menuToggle = document.querySelector("#menu-toggle");
     const navLinks = document.querySelector("#nav-links");
+
+    function setMusicButton(isPlaying) {
+      const label = isPlaying
+        ? "Pause Digital Clouds by Alejandro Magaña (Mixkit)"
+        : "Play Digital Clouds by Alejandro Magaña (Mixkit)";
+      musicToggle.setAttribute("aria-pressed", String(isPlaying));
+      musicToggle.setAttribute("aria-label", label);
+      musicToggle.title = label;
+    }
+
+    musicToggle.addEventListener("click", async () => {
+      musicToggle.disabled = true;
+      try {
+        if (!backgroundMusic.paused) {
+          backgroundMusic.pause();
+          setMusicButton(false);
+        } else {
+          await backgroundMusic.play();
+          setMusicButton(true);
+        }
+      } catch (error) {
+        console.error("Unable to play or stop ambient music:", error);
+        musicToggle.title = "Unable to play the music file. Check that assets/music/digital-clouds.mp3 is available.";
+      } finally {
+        musicToggle.disabled = false;
+      }
+    });
+
+    backgroundMusic.addEventListener("ended", () => setMusicButton(false));
 
     themeToggle.addEventListener("click", () => {
       document.body.classList.toggle("light");
@@ -849,8 +948,19 @@
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.08, rootMargin: "0px 0px -36px 0px" });
 
+    document.querySelectorAll(".experience-gallery, .cert-gallery, .project-media").forEach((gallery) => {
+      gallery.classList.add("reveal-group");
+    });
+    document.querySelectorAll(".focus-card, .experience-gallery a, .cert-gallery a, .project-media a").forEach((card) => {
+      card.classList.add("reveal");
+    });
+    document.querySelectorAll(".reveal-group").forEach((group) => {
+      [...group.children].filter((child) => child.classList.contains("reveal")).forEach((child, index) => {
+        child.style.setProperty("--reveal-delay", `${Math.min(index * 70, 420)}ms`);
+      });
+    });
     document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
   </script>
 </body>
