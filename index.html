@@ -186,6 +186,8 @@
       object-fit: cover;
       transition: transform .45s ease;
     }
+    .cv-actions { position: absolute; right: 0; bottom: 0; left: 0; justify-content: center; }
+    .cv-actions .button { min-height: 44px; font-size: .82rem; }
     .float-dot { position: absolute; width: 13px; height: 13px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 25px var(--glow); }
     .float-dot.one { top: 12%; right: 13%; width: 20px; height: 20px; opacity: .5; animation: dot-float 4s ease-in-out infinite; }
     .float-dot.two { bottom: 20%; left: 7%; width: 11px; height: 11px; opacity: .65; animation: dot-float 5s 1s ease-in-out infinite; }
@@ -518,6 +520,16 @@
           <span class="float-dot one" aria-hidden="true"></span><span class="float-dot two" aria-hidden="true"></span><span class="float-dot three" aria-hidden="true"></span>
           <div class="portrait">
             <img class="portrait-photo" src="assets/profile/profile.png" alt="David Jonathan Simanjuntak">
+          </div>
+          <div class="button-row cv-actions">
+            <a class="button primary" href="assets/profile/cv-david-jonathan-simanjuntak.pdf" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h8"></path></svg>
+              Lihat CV
+            </a>
+            <a class="button" href="assets/profile/cv-david-jonathan-simanjuntak.pdf" download="CV-David-Jonathan-Simanjuntak.pdf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4"></path><path d="M5 17v3h14v-3"></path></svg>
+              Download CV
+            </a>
           </div>
         </div>
       </div>
